@@ -1,28 +1,37 @@
-FROM frolvlad/alpine-glibc:alpine-3.5_glibc-2.25
+FROM frolvlad/alpine-glibc:latest
 
-RUN mkdir /tmp/install-tl-unx
+RUN mkdir /tmp/install-tl
 
-WORKDIR /tmp/install-tl-unx
+WORKDIR /tmp/install-tl
 
 COPY texlive.profile .
 
 # Install TeX Live 2016 with some basic collections
-RUN apk --no-cache add perl=5.24.0-r0 wget=1.18-r2 \
-	xz=5.2.2-r1 tar=1.29-r1 && \
-	wget ftp://tug.org/historic/systems/texlive/2016/install-tl-unx.tar.gz && \
-	tar --strip-components=1 -xvf install-tl-unx.tar.gz && \
-	./install-tl --repository http://repositorios.cpai.unb.br/ctan/systems/texlive/tlnet/ --profile=texlive.profile && \
-	tlmgr install collection-latex collection-latexextra collection-langspanish && \
-	apk del perl wget xz tar && \
-	cd && rm -rf /tmp/install-tl-unx
+RUN	REMOTE="https://ftp.tu-chemnitz.de/pub/tug/historic/systems/texlive/" &&\
+	TAR="install-tl-unx.tar.gz" &&\
+	VER=2019 &&\
+	apk --no-cache add perl curl tar xz wget&& \
+	curl -sSL $REMOTE/$VER/$TAR | tar -xvz --strip-components=1 && \
+	TEXLIVE_INSTALL_ENV_NOCHECK=true TEXLIVE_INSTALL_NO_WELCOME=true \
+	perl ./install-tl --profile=texlive.profile && \
+	tlmgr install latex-bin luatex xetex\
+	# collection-basic \
+	# collection-latex \
+	# collection-latexrecommended \
+	# collection-luatex \
+	# collection-mathscience \
+	# collection-xetex \                              
+	&& \
+	apk del perl curl tar xz&& \
+	cd && rm -rf /tmp/install-tl
 
 # Install additional packages
-RUN apk --no-cache add perl=5.24.0-r0 wget=1.18-r2 && \
-	tlmgr install bytefield algorithms algorithm2e ec fontawesome && \
-	apk del perl wget && \
-	mkdir /workdir
+# RUN apk --no-cache add perl wget && \
+	# tlmgr install bytefield algorithms algorithm2e ec fontawesome && \
+	# apk del perl wget && \
+	# mkdir /workdir
 
-ENV PATH="/usr/local/texlive/2016/bin/x86_64-linux:${PATH}"
+ENV PATH="/usr/local/texlive/2019/bin/x86_64-linux:${PATH}"
 
 WORKDIR /workdir
 
