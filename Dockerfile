@@ -1,37 +1,34 @@
-FROM frolvlad/alpine-glibc:latest
+FROM alpine:latest
 
-RUN mkdir /tmp/install-tl
+RUN mkdir /TeX
 
-WORKDIR /tmp/install-tl
+WORKDIR /TeX
 
-COPY texlive.profile .
+COPY texlive.profile pkgs-custom.txt ./
 
-# Install TeX Live 2016 with some basic collections
+# Minimal TeXLive installation
+# Ideas taken from https://github.com/yihui/tinytex
 RUN	REMOTE="https://ftp.tu-chemnitz.de/pub/tug/historic/systems/texlive/" &&\
 	TAR="install-tl-unx.tar.gz" &&\
 	VER=2019 &&\
-	apk --no-cache add perl curl tar xz wget&& \
-	curl -sSL $REMOTE/$VER/$TAR | tar -xvz --strip-components=1 && \
+	REPO="https://texlive.info/tlnet-archive/2019/12/31/tlnet/" &&\
+	apk --no-cache add perl curl tar xz wget fontconfig &&\
+	curl -sSL $REMOTE/$VER/$TAR | tar -xvz && \
+	mkdir texlive &&\
+	cd texlive &&\
 	TEXLIVE_INSTALL_ENV_NOCHECK=true TEXLIVE_INSTALL_NO_WELCOME=true \
-	perl ./install-tl --profile=texlive.profile && \
-	tlmgr install latex-bin luatex xetex\
-	# collection-basic \
-	# collection-latex \
-	# collection-latexrecommended \
-	# collection-luatex \
-	# collection-mathscience \
-	# collection-xetex \                              
-	&& \
-	apk del perl curl tar xz&& \
-	cd && rm -rf /tmp/install-tl
+	../install-tl-*/install-tl --profile=../texlive.profile \
+	-repository $REPO && \
+	cd bin/* &&\
+	./tlmgr option repository $REPO &&\
+	./tlmgr install latex-bin luatex xetex &&\
+	# Clean up insallation
+	rm -rf /TeX/install-tl-* textlive.profile pkgs-custom.txt &&\
+	# Clean up unused packages
+	apk del perl curl tar xz wget
+	
 
-# Install additional packages
-# RUN apk --no-cache add perl wget && \
-	# tlmgr install bytefield algorithms algorithm2e ec fontawesome && \
-	# apk del perl wget && \
-	# mkdir /workdir
-
-ENV PATH="/usr/local/texlive/2019/bin/x86_64-linux:${PATH}"
+ENV PATH="/TeX/texlive/bin/x86_64-linuxmusl:${PATH}"
 
 WORKDIR /workdir
 
