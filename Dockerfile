@@ -6,6 +6,9 @@ WORKDIR /TeX
 
 COPY texlive.profile tex-pkgs.txt ./
 
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
 # Minimal TeXLive installation
 # Ideas taken from https://github.com/yihui/tinytex
 RUN	REMOTE="https://ftp.tu-chemnitz.de/pub/tug/historic/systems/texlive/" &&\
