@@ -11,21 +11,18 @@ ENV LANG=C.UTF-8 \
 
 # Minimal TeXLive installation
 # Ideas taken from https://github.com/yihui/tinytex
-RUN	REMOTE="https://ftp.tu-chemnitz.de/pub/tug/historic/systems/texlive/" &&\
+RUN	REMOTE="http://mirror.ctan.org/systems/texlive/tlnet/" &&\
 	TAR="install-tl-unx.tar.gz" &&\
-	VER=2019 &&\
-	REPO="https://texlive.info/tlnet-archive/2019/12/31/tlnet/" &&\
         # Dispensable utils
 	apk --no-cache add curl tar xz wget \
 	fontconfig perl make bash &&\
-	curl -sSL $REMOTE/$VER/$TAR | tar -xvz && \
+	curl -sSL $REMOTE/$TAR | tar -xvz && \
 	mkdir texlive &&\
 	cd texlive &&\
 	TEXLIVE_INSTALL_ENV_NOCHECK=true TEXLIVE_INSTALL_NO_WELCOME=true \
-	../install-tl-*/install-tl --profile=../texlive.profile \
-	-repository $REPO && \
+	../install-tl-*/install-tl --profile=../texlive.profile  &&\
 	cd bin/* &&\
-	./tlmgr option repository $REPO &&\
+	./tlmgr option repository ctan &&\
 	./tlmgr install latex-bin luatex xetex &&\
 	# Install custom packages
         ./tlmgr install $(cat /TeX/tex-pkgs.txt | tr "\n" " ") &&\
