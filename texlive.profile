@@ -1,21 +1,15 @@
 selected_scheme scheme-minimal
-TEXDIR /usr/local/texlive/2019
-TEXMFCONFIG ~/.texlive2019/texmf-config
-TEXMFHOME ~/texmf
-TEXMFLOCAL /usr/local/texlive/texmf-local
-TEXMFSYSCONFIG /usr/local/texlive/2019/texmf-config
-TEXMFSYSVAR /usr/local/texlive/2019/texmf-var
-TEXMFVAR ~/.texlive2019/texmf-var
-binary_x86_64-linux 1
-collection-basic 1
-option_autobackup 0
+TEXDIR ./
+
+TEXMFSYSCONFIG ./texmf-config
+TEXMFLOCAL ./texmf-local
+TEXMFSYSVAR ./texmf-var
+
 option_doc 0
-option_letter 0
-option_menu_integration 1
-option_path 1
-option_post_code 1
 option_src 0
-option_sys_bin /usr/local/bin
-option_sys_info /usr/local/info
-option_sys_man /usr/local/man
+option_autobackup 0
+
 portable 1
+TEXMFCONFIG $TEXMFSYSCONFIG
+TEXMFHOME $TEXMFLOCAL
+TEXMFVAR $TEXMFSYSVAR
