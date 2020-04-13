@@ -53,6 +53,11 @@ COPY    pip-pkgs.txt ./
 RUN	pip3 install --no-cache-dir -r pip-pkgs.txt &&\
 	rm pip-pkgs.txt
 
+# Additional packages
+RUN     REPO="http://dl-cdn.alpinelinux.org/alpine/edge/community" &&\
+	apk add --repository $REPO --update \
+	--no-cach inkscape ghostscript
+
 
 	
 
