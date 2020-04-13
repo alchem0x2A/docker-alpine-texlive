@@ -25,6 +25,7 @@ dvipdfmx
 dvips
 ec
 enumitem
+epstopdf-pkg
 etex
 etexcmds
 etoolbox
@@ -57,6 +58,7 @@ letltxmacro
 lm
 ltablex
 ltxcmds
+lualatex-math
 luaotfload
 makeindex
 mathspec
@@ -66,6 +68,7 @@ minted
 natbib
 oberdiek
 pdfescape
+pdflscape
 pdfpages
 pdftexcmds
 pgf
