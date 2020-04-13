@@ -1,10 +1,10 @@
 achemso
 acronym
 adjustbox
-anysize
 amscls
 amsfonts
 amsmath
+anysize
 appendix
 atbegshi
 atveryend
@@ -18,7 +18,9 @@ blindtext
 bookcover
 booktabs
 caption
+collectbox
 dehyph-exptl
+diagbox
 dvipdfmx
 dvips
 ec
@@ -67,6 +69,7 @@ pdfescape
 pdfpages
 pdftexcmds
 pgf
+pict2e
 placeins
 refcount
 relsize
@@ -84,6 +87,7 @@ uniquecounter
 units
 upquote
 url
+wrapfig
 xcolor
 xkeyval
 zapfding

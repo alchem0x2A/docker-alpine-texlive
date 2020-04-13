@@ -56,7 +56,9 @@ RUN	pip3 install --no-cache-dir -r pip-pkgs.txt &&\
 # Additional packages
 RUN     REPO="http://dl-cdn.alpinelinux.org/alpine/edge/community" &&\
 	apk add --repository $REPO --update \
-	--no-cach inkscape ghostscript
+	--no-cach inkscape ghostscript msttcorefonts-installer &&\
+	update-ms-fonts &&\
+	fc-cache -f
 
 
 	
