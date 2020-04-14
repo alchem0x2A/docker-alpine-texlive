@@ -9,6 +9,7 @@ ENV LANG=C.UTF-8 \
 
 COPY texlive.profile  ./
 
+
 # Minimal TeXLive installation
 # Ideas taken from https://github.com/yihui/tinytex
 RUN	REMOTE="http://mirror.ctan.org/systems/texlive/tlnet/" &&\
@@ -39,27 +40,6 @@ RUN     cd /TeX/texlive/bin/* &&\
 	./tlmgr install $(cat /TeX/tex-pkgs.txt | tr "\n" " ") &&\
 	rm -rf /TeX/tex-pkgs.txt &&\
 	apk del wget tar xz
-
-# Prebuild images for now only exists for python3.8 and edge/community
-RUN     REPO="http://dl-cdn.alpinelinux.org/alpine/edge/community" &&\
-	apk add --repository $REPO --update \
-	--no-cache python3 py3-pip \
-	py3-numpy py3-matplotlib py3-scipy py3-pygments
-
-# Third layer for python packages
-COPY    pip-pkgs.txt ./
-
-
-RUN	pip3 install --no-cache-dir -r pip-pkgs.txt &&\
-	rm pip-pkgs.txt
-
-# Additional packages
-RUN     REPO="http://dl-cdn.alpinelinux.org/alpine/edge/community" &&\
-	apk add --repository $REPO --update \
-	--no-cach inkscape ghostscript msttcorefonts-installer &&\
-	update-ms-fonts &&\
-	fc-cache -f
-
 
 	
 
