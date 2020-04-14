@@ -1,4 +1,6 @@
 achemso
+algorithms
+algorithmicx
 acronym
 adjustbox
 amscls
@@ -18,6 +20,8 @@ blindtext
 bookcover
 booktabs
 caption
+catchfile
+capt-of
 collectbox
 dehyph-exptl
 diagbox
@@ -30,6 +34,8 @@ etex
 etexcmds
 etoolbox
 fancyvrb
+fancyhdr
+fvextra
 float
 floatrow
 fontspec
@@ -54,6 +60,7 @@ kvdefinekeys
 kvoptions
 kvsetkeys
 latexmk
+lineno
 letltxmacro
 lm
 ltablex
@@ -85,6 +92,7 @@ texlive-scripts
 times
 tools
 transparent
+ulem
 unicode-math
 uniquecounter
 units
@@ -92,5 +100,6 @@ upquote
 url
 wrapfig
 xcolor
+xstring
 xkeyval
 zapfding
