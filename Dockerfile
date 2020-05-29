@@ -58,17 +58,9 @@ RUN	git clone https://gitlab.com/git-latexdiff/git-latexdiff.git /tmp/gld &&\
 	rm -rf /tmp/gld
 
 
-
-        
-
-# All fonts are advised to be installed via tlmgr in a later stage
-# Install additional packages
-# RUN apk --no-cache add perl wget && \
-	# tlmgr install bytefield algorithms algorithm2e ec fontawesome && \
-	# apk del perl wget && \
-	# mkdir /workdir
-
 WORKDIR /workdir
+
+CMD ["/bin/bash"]
 
 VOLUME ["/workdir"]
 
