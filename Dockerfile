@@ -60,8 +60,7 @@ RUN	git clone https://gitlab.com/git-latexdiff/git-latexdiff.git /tmp/gld &&\
 
 WORKDIR /workdir
 
-CMD ["/bin/bash"]
+entrypoint ["/bin/bash"]
 
 VOLUME ["/workdir"]
 
-ENTRYPOINT ["bash"]
