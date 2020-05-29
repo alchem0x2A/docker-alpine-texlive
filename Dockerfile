@@ -83,7 +83,7 @@ RUN	rm -rf /usr/share/icons &&\
 
 WORKDIR /workdir
 
-entrypoint ["/bin/bash"]
+CMD ["/bin/bash"]
 
 VOLUME ["/workdir"]
 
