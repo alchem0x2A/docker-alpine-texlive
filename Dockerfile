@@ -21,7 +21,6 @@ RUN	apt-get update -qy &&\
 	xz-utils || exit 1  &&\
 	# Install the basic tex
 	apt-get install -f -qy --no-install-recommends \
-	cm-super \
 	dvipng \
 	ghostscript \
 	latexmk \
@@ -44,18 +43,42 @@ RUN	apt-get update -qy &&\
 	# Source: https://github.com/aergus/dockerfiles/blob/master/latex/Dockerfile
 	apt-get --purge remove -qy .\*-doc$ && \
 	# save some space
-	rm -rf /var/lib/apt/lists/* && apt-get clean
-
-# update fontutils and lua
-RUN     fc-cache -fv || exit 1 &&\
-	texhash --verbose ||exit 1  &&\
-	luaotfload-tool --update || exit 1
+	rm -rf /var/lib/apt/lists/* &&\
+	apt-get clean
 
 # Install git-latexdiff
 RUN	git clone https://gitlab.com/git-latexdiff/git-latexdiff.git /tmp/gld &&\
 	cp /tmp/gld/git-latexdiff /usr/local/bin/ &&\
 	chmod a+x /usr/local/bin/git-latexdiff &&\
 	rm -rf /tmp/gld
+
+# update fontutils and lua
+RUN     fc-cache -fv || exit 1 &&\
+	texhash --verbose ||exit 1  &&\
+	luaotfload-tool --update || exit 1
+
+# Delete possibly unused stuff
+RUN	rm -rf /usr/share/icons &&\
+	mkdir -p /usr/share/icons &&\
+	rm -rf /usr/share/man &&\
+	mkdir -p /usr/share/man &&\
+	find /usr/share/doc -depth -type f ! -name copyright -delete &&\
+	find /usr/share/doc -type f -name "*.pdf" -delete &&\
+	find /usr/share/doc -type f -name "*.gz" -delete &&\
+	find /usr/share/doc -type f -name "*.tex" -delete &&\
+	find /usr/share/doc -type d -empty -delete || true &&\
+	mkdir -p /usr/share/doc &&\
+	rm -rf /var/cache/apt/archives &&\
+	mkdir -p /var/cache/apt/archives &&\
+	rm -rf /tmp/* /var/tmp/* &&\
+	find /usr/share/ -type f -empty -delete || true &&\
+	find /usr/share/ -type d -empty -delete || true &&\
+	mkdir -p /usr/share/texmf/source &&\
+	mkdir -p /usr/share/texlive/texmf-dist/source	 
+
+
+
+
 
 
 WORKDIR /workdir
