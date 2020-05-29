@@ -1,38 +1,75 @@
-FROM frolvlad/alpine-glibc:latest
+# Starting package
+FROM python:3.8-slim-buster
 
-RUN mkdir /tmp/install-tl
+LABEL	maintainer "T.Tian <tian.tian@chem.ethz.ch>"
 
-WORKDIR /tmp/install-tl
+ENV	LANG=C.UTF-8 \
+	LC_ALL=C.UTF-8
 
-COPY texlive.profile .
+# Install TeX Live with some basic collections
+RUN	apt-get update -qy &&\
+	# Install necessary certificate?
+	apt-get install -f -qy --no-install-recommends apt-utils || exit 1 &&\
+	# get and update certificates, to hopefully resolve mscorefonts error
+	apt-get install -f -qy --no-install-recommends ca-certificates || exit 1  &&\
+	update-ca-certificates &&\
+	# Basic utils
+	apt-get install -f -y --no-install-recommends \
+	fontconfig \
+	git \
+	wget \
+	xz-utils || exit 1  &&\
+	# Install the basic tex
+	apt-get install -f -qy --no-install-recommends \
+	cm-super \
+	dvipng \
+	ghostscript \
+	latexmk \
+	latexdiff \
+	make \
+	poppler-utils \
+	psutils \
+	t1utils \
+	texlive-base \
+	texlive-binaries \
+	texlive-font-utils \
+	texlive-latex-base \
+	texlive-latex-recommended \
+	texlive-luatex \
+	texlive-pictures \
+	texlive-pstricks \
+	texlive-xetex || exit 1 &&\
+	# Removing documentation packages *after* installing them is kind of hacky,
+	# but it only adds some overhead while building the image.
+	# Source: https://github.com/aergus/dockerfiles/blob/master/latex/Dockerfile
+	apt-get --purge remove -qy .\*-doc$ && \
+	# save some space
+	rm -rf /var/lib/apt/lists/* && apt-get clean
 
-# Install TeX Live 2016 with some basic collections
-RUN	REMOTE="https://ftp.tu-chemnitz.de/pub/tug/historic/systems/texlive/" &&\
-	TAR="install-tl-unx.tar.gz" &&\
-	VER=2019 &&\
-	apk --no-cache add perl curl tar xz wget&& \
-	curl -sSL $REMOTE/$VER/$TAR | tar -xvz --strip-components=1 && \
-	TEXLIVE_INSTALL_ENV_NOCHECK=true TEXLIVE_INSTALL_NO_WELCOME=true \
-	perl ./install-tl --profile=texlive.profile && \
-	tlmgr install latex-bin luatex xetex\
-	# collection-basic \
-	# collection-latex \
-	# collection-latexrecommended \
-	# collection-luatex \
-	# collection-mathscience \
-	# collection-xetex \                              
-	&& \
-	apk del perl curl tar xz&& \
-	cd && rm -rf /tmp/install-tl
+# update fontutils and lua
+RUN     fc-cache -fv || exit 1 &&\
+	texhash --verbose ||exit 1  &&\
+	luaotfload-tool --update || exit 1
 
+# Install git-latexdiff
+RUN	git clone https://gitlab.com/git-latexdiff/git-latexdiff.git /tmp/gld &&\
+	cp /tmp/gld/git-latexdiff /usr/local/bin/ &&\
+	chmod a+x /usr/local/bin/git-latexdiff &&\
+	rm -rf /tmp/gld
+
+
+
+        
+
+# All fonts are advised to be installed via tlmgr in a later stage
 # Install additional packages
 # RUN apk --no-cache add perl wget && \
 	# tlmgr install bytefield algorithms algorithm2e ec fontawesome && \
 	# apk del perl wget && \
 	# mkdir /workdir
 
-ENV PATH="/usr/local/texlive/2019/bin/x86_64-linux:${PATH}"
-
 WORKDIR /workdir
 
 VOLUME ["/workdir"]
+
+ENTRYPOINT ["bash"]
