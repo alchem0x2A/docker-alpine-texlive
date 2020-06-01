@@ -1,5 +1,6 @@
 # Starting package
-FROM python:3.8-slim-buster
+# FROM python:3.8-slim-buster
+FROM debian:latest
 
 LABEL	maintainer "T.Tian <tian.tian@chem.ethz.ch>"
 
@@ -20,13 +21,13 @@ RUN	apt-get update -qy &&\
 	wget \
 	xz-utils || exit 1  &&\
 	# Install the basic tex
-	apt-get install -f -qy --no-install-recommends \
-	dvipng \
-	ghostscript \
-	make \
-	poppler-utils \
-	psutils \
-	t1utils || exit 1 &&\
+	# apt-get install -f -qy --no-install-recommends \
+	# dvipng \
+	# ghostscript \
+	# make \
+	# poppler-utils \
+	# psutils \
+	# t1utils || exit 1 &&\
 	# Removing documentation packages *after* installing them is kind of hacky,
 	# but it only adds some overhead while building the image.
 	# Source: https://github.com/aergus/dockerfiles/blob/master/latex/Dockerfile
@@ -39,6 +40,7 @@ RUN mkdir /TeX
 
 WORKDIR /TeX
 
+
 COPY	texlive.profile tex-pkgs.txt /TeX/
 
 # Install newest TeXLive
@@ -47,23 +49,25 @@ RUN	TAR="http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz" &&\
 	mkdir texlive && cd texlive &&\
 	TEXLIVE_INSTALL_ENV_NOCHECK=true TEXLIVE_INSTALL_NO_WELCOME=true \
 	../install-tl-*/install-tl --profile=../texlive.profile && cd bin/* &&\
-	./tlmgr option repository $REPO &&\
-	./tlmgr install latex-bin luatex xetex &&\
+	./tlmgr install latex-bin luatex xetex latexmk latexdiff &&\
 	# Install custom packages
         ./tlmgr install $(cat /TeX/tex-pkgs.txt | tr "\n" " ") &&\
 	# Clean up insallation
         cd /TeX/ &&\
 	rm -rf install-tl-* textlive.profile tex-pkgs.txt
 
+# where to find the bin
+ENV PATH="/TeX/texlive/bin/x86_64-linux/:${PATH}"
+
 # Install git-latexdiff
 RUN	git clone https://gitlab.com/git-latexdiff/git-latexdiff.git /tmp/gld &&\
-	cp /tmp/gld/git-latexdiff /usr/local/bin/ &&\
-	chmod a+x /usr/local/bin/git-latexdiff &&\
+	cp /tmp/gld/git-latexdiff /TeX/texlive/bin/x86_64-linux/ &&\
+	chmod a+x /TeX/texlive/bin/x86_64-linux/git-latexdiff &&\
 	rm -rf /tmp/gld
 
 # update fontutils and lua
-RUN     fc-cache -fv || exit 1 &&\
-	texhash --verbose ||exit 1
+# RUN     fc-cache -fv || exit 1 &&\
+	# texhash --verbose ||exit 1
 
 # Delete possibly unused stuff
 RUN	rm -rf /usr/share/icons &&\
@@ -84,8 +88,6 @@ RUN	rm -rf /usr/share/icons &&\
 	mkdir -p /usr/share/texmf/source &&\
 	mkdir -p /usr/share/texlive/texmf-dist/source	 
 
-
-ENV PATH="/TeX/texlive/bin/x86_64-linux/:${PATH}"
 
 WORKDIR /workdir
 
